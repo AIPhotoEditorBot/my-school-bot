@@ -4,6 +4,7 @@ import sys
 from datetime import datetime, timedelta
 import aiosqlite
 from aiogram import Bot, Dispatcher, F, types
+from aiogram.types import Message
 from aiogram.filters import Command, CommandStart, CommandObject
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
@@ -53,6 +54,17 @@ async def init_db():
         await db.commit()
 
 # --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
+# CHAT_ID — id вашего чата, OLD_MESSAGE_ID — то, что мы узнали в пункте 1
+@dp.message(Command("go"))
+async def send_old_reply(message: Message):
+    chat_id = -1002720925459  # твой чат
+    text = "фрик"
+
+    await bot.send_message(
+        chat_id=chat_id,
+        text=text,
+        reply_to_message_id=10002
+    )
 
 def get_day_name(date_obj):
     days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
@@ -242,7 +254,7 @@ async def cmd_start(message: types.Message, command: CommandObject, state: FSMCo
                     (chat_id, day_int)
                 )
                 subjects = await cursor.fetchall()
-            
+                
             # Фильтруем пустые уроки (прочерки)
             valid_subjects = [s[0] for s in subjects if s[0] != "—"]
             
